@@ -2,9 +2,7 @@
 
 struct renTri {
     float vertices[6];
-    unsigned int vertexShader;
-    unsigned int fragmentShader;
-    unsigned int VBO, VAO;
+    GLuint VBO, VAO;
 };
 
 const char *vertexShaderSource = "#version 330 core\n"
@@ -20,43 +18,70 @@ const char *fragmentShaderSource = "#version 330 core\n"
     "   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
     "}\n\0";
 
-static void renInitTriangle(REN_TRI *triangle) {
-
-    triangle->vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(triangle->vertexShader, 1, &vertexShaderSource, NULL);
-    glCompileShader(triangle->vertexShader);
+static GLuint renCompileVertexShader() {
+    GLuint vertexShader;
+    glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
+    glCompileShader(vertexShader);
     int success;
     char infoLog[512];
-    glGetShaderiv(triangle->vertexShader, GL_COMPILE_STATUS, &success);
+    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
     if (!success)
     {
-        glGetShaderInfoLog(triangle->vertexShader, 512, NULL, infoLog);
-        printf("ERROR::SHADER::VERTEX::COMPILATION_FAILED\n %d\n", infoLog);
+        glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
+        printf("ERROR::SHADER::VERTEX::COMPILATION_FAILED\n");
+        printf(infoLog);
+        return;
     }
+  
+    return vertexShader;
+}
 
-    triangle->fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(triangle->fragmentShader, 1, &fragmentShaderSource, NULL);
-    glCompileShader(triangle->fragmentShader);
-
-    glGetShaderiv(triangle->fragmentShader, GL_COMPILE_STATUS, &success);
+static GLuint renCompileFragmentShader() {
+    GLuint fragmentShader
+  
+    glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
+    glCompileShader(fragmentShader);
+    int success;
+    char infoLog[512];
+    glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
     if (!success)
     {
-        glGetShaderInfoLog(triangle->fragmentShader, 512, NULL, infoLog);
-        printf("ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n %d\n", infoLog);
+        glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);             
+        printf("ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n");
+        printf(infoLog);
+        return;
     }
+  
+    return vertexShader;
+}
 
-    unsigned int shaderProgram = glCreateProgram();
-    glAttachShader(shaderProgram, triangle->vertexShader);
-    glAttachShader(shaderProgram, triangle->fragmentShader);
+static GLuint renMakeShaderProgram(GLuint vertexShader, GLuint fragmentShader) {
+    GLuint shaderProgram
+  
+    glCreateProgram();
+    glAttachShader(shaderProgram, vertexShader);
+    glAttachShader(shaderProgram, fragmentShader);
     glLinkProgram(shaderProgram);
-
+    int success;
+    char infoLog[512];
     glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
     if (!success) {
         glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-        printf("ERROR::SHADER::PROGRAM::LINKING_FAILED\n %d\n", infoLog);
+        printf("ERROR::SHADER::PROGRAM::LINKING_FAILED\n");
+        return;
     }
-    glDeleteShader(triangle->vertexShader);
-    glDeleteShader(triangle->fragmentShader);
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);
+    return shaderProgram;
+}
+
+static void renInitTriangle(REN_TRI *triangle) {
+
+    GLuint vertexShader = renCompileVertexShader();
+    GLuint fragmentShader = renCompileFragmentShader();
+    GLuint shaderProgram = renMakeShaderProgram();
 
     glGenVertexArrays(1, &triangle->VAO);
     glGenBuffers(1, &triangle->VBO);
@@ -76,10 +101,4 @@ static void renInitTriangle(REN_TRI *triangle) {
 
 static void renDrawTriangle(REN_TRI triangle) {
     
-}
-
-int main() {
-    REN_TRI tri;
-    renInitTriangle(&tri);
-    renDrawTriangle(tri);
 }
