@@ -10,6 +10,7 @@
 #include <SDL2/SDL.h>
 // Include GLAD
 #include <glad/glad.h>
+#include <ren/renderer.h>
 
 int main(int argc, char* argv[]){
 
@@ -52,6 +53,12 @@ int main(int argc, char* argv[]){
     // Setup our function pointers
     gladLoadGLLoader(SDL_GL_GetProcAddress);
 
+    float vertexArray[6] = {
+        -0.5f, -0.5f, // left  
+         0.5f, -0.5f, // right 
+         0.0f,  0.5f  // top   
+    }; 
+    RENTri tri = renInitTriangle(vertexArray);
     // Infinite loop for our application
     bool gameIsRunning = true;
     while(gameIsRunning){
@@ -83,6 +90,8 @@ int main(int argc, char* argv[]){
 
         glClearColor(1.0f,0.0f,0.0f,1.0f);
         glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+
+        renDrawTriangle(tri);
 
         SDL_GL_SwapWindow(window);
     }
