@@ -21,6 +21,7 @@
                 "SDL2main",
                 "-l",
                 "SDL2",
+                "-Werror"
             ],
             "options": {
                 "cwd": "${fileDirname}"

@@ -64,23 +64,23 @@ GLuint renCreateShaderProgram(GLuint vertexShader, GLuint fragmentShader) {
     return shaderProgram;
 }
 
-RENTri renInitTriangle(float vertexArray[6]) {
-    RENTri triangle;
-    memcpy(triangle.vertices, vertexArray, sizeof(triangle.vertices));
+RENTri renInitTri(float vertices[9]) {
+    RENTri tri;
+    memcpy(&tri.vertices, &vertices, sizeof(*vertices));
     GLuint vertexShader = renCompileVertexShader();
     GLuint fragmentShader = renCompileFragmentShader();
-    triangle.shaderProgram = renCreateShaderProgram(vertexShader, fragmentShader);
     GLuint VBO;
+    tri.shaderProgram = renCreateShaderProgram(vertexShader, fragmentShader);
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
 
-    glGenVertexArrays(1, &triangle.VAO);
+    glGenVertexArrays(1, &tri.VAO);
     glGenBuffers(1, &VBO);
 
-    glBindVertexArray(triangle.VAO);
+    glBindVertexArray(tri.VAO);
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(triangle.vertices), triangle.vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(tri.vertices), tri.vertices, GL_STATIC_DRAW);
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
@@ -89,12 +89,52 @@ RENTri renInitTriangle(float vertexArray[6]) {
 
     glBindVertexArray(0); 
 
-    return triangle;
+    return tri;
 }
 
-void renDrawTriangle(RENTri triangle) {
-    glUseProgram(triangle.shaderProgram);
-    glBindVertexArray(triangle.VAO);
+void renDrawTri(RENTri tri) {
+    glUseProgram(tri.shaderProgram);
+    glBindVertexArray(tri.VAO);
     glDrawArrays(GL_TRIANGLE_FAN, 0, 3);
+    return;
+}
+
+RENRect renInitRect(float vertices[12], float indices[6]) {
+    RENRect rect;
+    memcpy(&rect.vertices, &vertices, sizeof(*vertices)); 
+    memcpy(&rect.indices, &indices, sizeof(*indices)); 
+    GLuint vertexShader = renCompileVertexShader();
+    GLuint fragmentShader = renCompileFragmentShader();
+    GLuint VBO, EBO;
+    rect.shaderProgram = renCreateShaderProgram(vertexShader, fragmentShader);
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);
+
+    glGenVertexArrays(1, &rect.VAO);
+    glGenBuffers(1, &VBO);
+    glGenBuffers(1, &EBO);
+
+    glBindVertexArray(rect.VAO);
+
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(rect.vertices), rect.vertices, GL_STATIC_DRAW);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(rect.indices), rect.indices, GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0); 
+
+    glBindVertexArray(0); 
+
+    return rect;
+}
+
+void renDrawRect(RENRect rect) {
+    glUseProgram(rect.shaderProgram);
+    glBindVertexArray(rect.VAO);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     return;
 }
