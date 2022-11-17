@@ -56,8 +56,6 @@ int main(int argc, char* argv[]){
     RENRect rect = renInitRect();
     //RENTri tri = renInitTri();
 
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
     // Infinite loop for our application
     bool gameIsRunning = true;
     while(gameIsRunning){
