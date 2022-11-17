@@ -53,17 +53,11 @@ int main(int argc, char* argv[]){
     // Setup our function pointers
     gladLoadGLLoader(SDL_GL_GetProcAddress);
 
-    float vertexArray[12] = {
-         0.5f,  0.5f, 0.0f,  // top right
-         0.5f, -0.5f, 0.0f,  // bottom right
-        -0.5f, -0.5f, 0.0f,  // bottom left
-        -0.5f,  0.5f, 0.0f   // top left 
-    }; 
-    float indicesArray[6] = {
-        0, 1, 3,  // first Triangle
-        1, 2, 3   // second Triangle
-    };
-    RENRect rect = renInitRect(vertexArray, indicesArray);
+    RENRect rect = renInitRect();
+    //RENTri tri = renInitTri();
+
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
     // Infinite loop for our application
     bool gameIsRunning = true;
     while(gameIsRunning){
@@ -96,6 +90,7 @@ int main(int argc, char* argv[]){
         glClearColor(0.0f,0.0f,1.0f,1.0f);
         glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
+        //renDrawTri(tri);
         renDrawRect(rect);
 
         SDL_GL_SwapWindow(window);

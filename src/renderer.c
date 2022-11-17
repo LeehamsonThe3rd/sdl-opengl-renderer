@@ -64,9 +64,15 @@ GLuint renCreateShaderProgram(GLuint vertexShader, GLuint fragmentShader) {
     return shaderProgram;
 }
 
-RENTri renInitTri(float vertices[9]) {
+RENTri renInitTri() {
     RENTri tri;
-    memcpy(&tri.vertices, &vertices, sizeof(*vertices));
+
+    float vertices[9] = {
+        -0.5f, -0.5f, 0.0f, // left  
+         0.5f, -0.5f, 0.0f, // right 
+         0.0f,  0.5f, 0.0f  // top   
+    }; 
+
     GLuint vertexShader = renCompileVertexShader();
     GLuint fragmentShader = renCompileFragmentShader();
     GLuint VBO;
@@ -80,7 +86,7 @@ RENTri renInitTri(float vertices[9]) {
     glBindVertexArray(tri.VAO);
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(tri.vertices), tri.vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
@@ -92,17 +98,21 @@ RENTri renInitTri(float vertices[9]) {
     return tri;
 }
 
-void renDrawTri(RENTri tri) {
-    glUseProgram(tri.shaderProgram);
-    glBindVertexArray(tri.VAO);
-    glDrawArrays(GL_TRIANGLE_FAN, 0, 3);
-    return;
-}
-
-RENRect renInitRect(float vertices[12], float indices[6]) {
+RENRect renInitRect() {
     RENRect rect;
-    memcpy(&rect.vertices, &vertices, sizeof(*vertices)); 
-    memcpy(&rect.indices, &indices, sizeof(*indices)); 
+
+    float vertices[12] = {
+         0.5f,  0.5f, 0.0f,  // top right
+         0.5f, -0.5f, 0.0f,  // bottom right
+        -0.5f, -0.5f, 0.0f,  // bottom left
+        -0.5f,  0.5f, 0.0f   // top left 
+    }; 
+
+    float indices[6] = {
+        0, 1, 3,  // first Triangle
+        1, 2, 3   // second Triangle
+    };
+
     GLuint vertexShader = renCompileVertexShader();
     GLuint fragmentShader = renCompileFragmentShader();
     GLuint VBO, EBO;
@@ -117,10 +127,10 @@ RENRect renInitRect(float vertices[12], float indices[6]) {
     glBindVertexArray(rect.VAO);
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(rect.vertices), rect.vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(rect.indices), rect.indices, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
@@ -130,6 +140,13 @@ RENRect renInitRect(float vertices[12], float indices[6]) {
     glBindVertexArray(0); 
 
     return rect;
+}
+
+void renDrawTri(RENTri tri) {
+    glUseProgram(tri.shaderProgram);
+    glBindVertexArray(tri.VAO);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    return;
 }
 
 void renDrawRect(RENRect rect) {

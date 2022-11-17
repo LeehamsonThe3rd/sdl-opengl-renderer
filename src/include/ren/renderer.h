@@ -18,7 +18,7 @@ typedef struct RENRect {
 extern GLuint renCompileVertexShader();
 extern GLuint renCompileFragmentShader();
 extern GLuint renCreateShaderProgram(GLuint, GLuint);
-extern RENTri renInitTri(float[9]);
-extern RENRect renInitRect(float[12], float[6]);
+extern RENTri renInitTri();
+extern RENRect renInitRect();
 extern void renDrawTri(RENTri);
 extern void renDrawRect(RENRect);
