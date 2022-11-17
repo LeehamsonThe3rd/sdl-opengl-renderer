@@ -108,7 +108,7 @@ RENRect renInitRect() {
         -0.5f,  0.5f, 0.0f   // top left 
     }; 
 
-    float indices[6] = {
+    GLuint indices[6] = {
         0, 1, 3,  // first Triangle
         1, 2, 3   // second Triangle
     };
